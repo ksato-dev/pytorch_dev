@@ -6,6 +6,7 @@ import numpy as np
 import json
 from PIL import Image
 import time
+import torch2trt
 
 # from torchvision.models.inception import BasicConv2d
 
@@ -14,6 +15,8 @@ resize = 224
 mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
 
+# mode = "fp16"
+mode = "int8"
 
 def create_ranking(out):
     """ create ranking
@@ -60,21 +63,25 @@ if __name__ == "__main__":
     )
 
     img_transformed = trans_pipeline(pil_img)
-    # model = tv_models.vgg16(pretrained=True)
-    model = tv_models.efficientnet_b4(pretrained=True)
-    model.eval()
 
     batch_input = img_transformed.unsqueeze(0)
+    batch_input = batch_input.cuda()
+
+    trt_model = torch2trt.TRTModule()
+    if mode == "fp16":
+        trt_model.load_state_dict(torch.load('efficientnet_b4.fp16.pth'))
+    elif mode == "int8":
+        trt_model.load_state_dict(torch.load('efficientnet_b4.int8.pth'))
 
     start_time = time.time()
-    out = model(batch_input)
+    out = trt_model(batch_input)
     end_time = time.time()
     print(end_time - start_time, "[sec]")
 
     # print(img_transformed)
     # print(out)
 
-    np_out = out.detach().numpy()
+    np_out = out.detach().cpu().numpy()
 
     max_id = np.argmax(np_out)
     print(max_id)

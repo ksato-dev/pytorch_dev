@@ -63,9 +63,11 @@ if __name__ == "__main__":
     # model = tv_models.vgg16(pretrained=True)
     model = tv_models.efficientnet_b4(pretrained=True)
     model.eval()
+    model.cuda()
 
     batch_input = img_transformed.unsqueeze(0)
-
+    batch_input = batch_input.cuda()
+    
     start_time = time.time()
     out = model(batch_input)
     end_time = time.time()
@@ -74,7 +76,7 @@ if __name__ == "__main__":
     # print(img_transformed)
     # print(out)
 
-    np_out = out.detach().numpy()
+    np_out = out.detach().cpu().numpy()
 
     max_id = np.argmax(np_out)
     print(max_id)
