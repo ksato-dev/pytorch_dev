@@ -15,9 +15,8 @@ std = (0.229, 0.224, 0.225)
 
 
 def create_ranking(out):
-    # create ranking
-
-    # ILSVRCのラベル情報をロードし辞意書型変数を生成します
+    """ create ranking
+    """
     ILSVRC_class_index = json.load(
         open(
             "/opt/dataset/pytorch_advanced/1_image_classification/data/imagenet_class_index.json",
