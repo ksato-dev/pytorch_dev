@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 from my_utils import MyDataSet, MyTransfroms
-from model import AlexNet
+from model import ZFNet
 import torch
 import tqdm
 
@@ -11,8 +11,8 @@ if __name__ == "__main__":
     train_img_dir_path = "/home/ksato-thinkbook/dataset/hymenoptera_data/train/"
 
     # resize = 227
-    resize = 128
-    # resize = 224
+    # resize = 128
+    resize = 224
     mean = (0.485, 0.456, 0.406)
     std = (0.229, 0.224, 0.225)
     transforms = MyTransfroms(resize, mean, std)
@@ -23,11 +23,11 @@ if __name__ == "__main__":
     print(label)
 
     train_data_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=16, shuffle=True)
+        train_dataset, batch_size=32, shuffle=True)
 
     print(train_data_loader)
 
-    net = AlexNet(init_weights=True)
+    net = ZFNet(init_weights=True)
     net.train()
     loss_func = torch.nn.CrossEntropyLoss()
 
@@ -39,6 +39,7 @@ if __name__ == "__main__":
 
     num_epochs = 100
     sizeof_dataset = len(train_data_loader.dataset)
+    print("size of dataset:", sizeof_dataset)
     torch.set_grad_enabled(True)  # 勾配計算を有効にする。
     for epoch in tqdm.tqdm(range(num_epochs)):
         total_loss = 0
@@ -62,3 +63,5 @@ if __name__ == "__main__":
         print("total loss:", total_loss / sizeof_dataset)
         print("corrects:", corrects / sizeof_dataset)
         print("========================")
+
+    torch.save(net.state_dict(), 'model_weights.pth')
