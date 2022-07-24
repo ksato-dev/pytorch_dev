@@ -1,5 +1,5 @@
 from select import epoll
-from my_utils import MyDataSet, MyTransfroms
+from my_utils import HymenopteraDataSet, MyTransfroms
 from model import AlexNet
 from vgg import VGG16
 import torchvision
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # ])
     transforms = MyTransfroms(resize, mean, std)
 
-    train_dataset = MyDataSet(train_img_dir_path, transforms)
+    train_dataset = HymenopteraDataSet(train_img_dir_path, transforms)
     input, label = train_dataset[0]
     print(input.shape)
     print(label)

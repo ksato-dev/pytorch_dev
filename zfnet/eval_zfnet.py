@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from my_utils import MyDataSet, MyTransfroms
+from my_utils import HymenopteraDataSet, MyTransfroms
 from model import ZFNet
 import torch
 import tqdm
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     std = (0.229, 0.224, 0.225)
     transforms = MyTransfroms(resize, mean, std)
 
-    val_dataset = MyDataSet(val_img_dir_path, transforms)
+    val_dataset = HymenopteraDataSet(val_img_dir_path, transforms)
     input, label = val_dataset[0]
     print(input.shape)
     print(label)

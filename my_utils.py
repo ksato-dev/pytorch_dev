@@ -42,7 +42,7 @@ class MyTransfroms(object):
                 resize, scale=(0.5, 1.0)
             ),
             torchvision.transforms.RandomHorizontalFlip(),
-            torchvision.transforms.RandomVerticalFlip(),
+            # torchvision.transforms.RandomVerticalFlip(),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(mean, std)
         ])
@@ -56,11 +56,16 @@ class MyTransfroms(object):
         return ret_img
 
 
-class MyDataSet(torch.utils.data.Dataset):
+class HymenopteraDataSet(torch.utils.data.Dataset):
 
-    def __init__(self, data_dir_path, transform):
+    def __init__(self, data_dir_path, transform, ext=""):
+        if ext == "":
+            self.ext = "jpg"
+        else:
+            self.ext = ext
+
         self.img_path_list = glob.glob(
-            data_dir_path + "/**/*.jpg", recursive=True)
+            data_dir_path + "/**/*." + self.ext, recursive=True)
         self.transform = transform
 
     def __len__(self):

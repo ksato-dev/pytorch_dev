@@ -1,7 +1,8 @@
 import torch
 
+
 class NetworkInNetwork(torch.nn.Module):
-    def __init__(self, class_num = 2, init_weights=False):
+    def __init__(self, class_num=2, init_weights=False):
         super().__init__()
         self.conv1 = torch.nn.Conv2d(
             kernel_size=5, in_channels=3, out_channels=192, stride=1, padding=2)
@@ -50,20 +51,19 @@ class NetworkInNetwork(torch.nn.Module):
                 torch.nn.init.normal_(m.weight, 0, 0.01)
                 torch.nn.init.constant_(m.bias, 0)
 
-
     def forward(self, inputs):
         outputs = inputs
         outputs = torch.nn.functional.relu(self.conv1(outputs))
         outputs = torch.nn.functional.relu(self.conv2(outputs))
         outputs = torch.nn.functional.relu(self.conv3(outputs))
         outputs = self.max_pool1(outputs)
-        outputs = torch.nn.Dropout2d(p = 0.3)(outputs)
+        outputs = torch.nn.Dropout2d(p=0.3)(outputs)
 
         outputs = torch.nn.functional.relu(self.conv4(outputs))
         outputs = torch.nn.functional.relu(self.conv5(outputs))
         outputs = torch.nn.functional.relu(self.conv6(outputs))
         outputs = self.max_pool2(outputs)
-        outputs = torch.nn.Dropout2d(p = 0.3)(outputs)
+        outputs = torch.nn.Dropout2d(p=0.3)(outputs)
 
         outputs = torch.nn.functional.relu(self.conv7(outputs))
         outputs = torch.nn.functional.relu(self.conv8(outputs))
