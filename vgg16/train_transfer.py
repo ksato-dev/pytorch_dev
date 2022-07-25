@@ -1,10 +1,10 @@
-from ctypes import sizeof
 import sys
 
 sys.path.append("../")
 
 from my_utils import HymenopteraDataSet, MyTransfroms
-from model import VGG16
+# from model import VGG16
+import torchvision
 import torch
 import tqdm
 
@@ -25,19 +25,23 @@ def main():
     sample_imgs, labels = next(iter(train_data_loader))
     # print(data)
 
-    network = VGG16(init_weights=True)
-    network.load_state_dict(torch.load("model.pth"))
+    # network = VGG16(init_weights=True)
+    network = torchvision.models.vgg16(pretrained=True)
     network.train()
-    # sample_output = network(sample_imgs)
-    # print(sample_output)
 
-    for params in network.parameters():
-        params.requires_grad = True
+    network.classifier[6] = torch.nn.Linear(in_features=4096, out_features=2)
+
+    params_to_update = ["classifier.6.weight", "classifier.6.bias"]
+    for name, params in network.named_parameters():
+        if name in params_to_update:
+            params.requires_grad = True
+        else:
+            params.requires_grad = False
     
     opt = torch.optim.SGD(network.parameters(), lr=1e-3, momentum=0.9)
     loss_func = torch.nn.CrossEntropyLoss()
 
-    num_epochs = 20
+    num_epochs = 10
 
     sizeof_dataset = len(train_dataset)
     print("sizeof_dataset:", sizeof_dataset)
@@ -66,7 +70,7 @@ def main():
         print("total_loss:", total_loss / sizeof_dataset)
         print("total_corrects:", total_corrects / sizeof_dataset)
 
-    torch.save(network.state_dict(), "model.pth")
+    torch.save(network.state_dict(), "transfered_model.pth")
 
 
 if __name__ == "__main__":
